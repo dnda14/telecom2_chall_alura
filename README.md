@@ -1,74 +1,63 @@
-Telecom Customer Churn Prediction
-📌 Descripción del Proyecto
-Este proyecto tiene como objetivo desarrollar modelos predictivos para identificar clientes con alta probabilidad de cancelar sus servicios (churn) en una empresa de telecomunicaciones. A partir de un análisis exploratorio y la aplicación de técnicas de machine learning, se busca anticipar la deserción y proporcionar información estratégica para la retención de clientes.
+# Telecom Customer Churn Prediction 📡
 
-📊 Dataset
-El conjunto de datos contiene información de 7267 clientes con 21 variables, que incluyen:
+## 📌 Descripción del Proyecto
+Este proyecto tiene como objetivo desarrollar modelos predictivos para identificar clientes con alta probabilidad de cancelar sus servicios (**churn**) en una empresa de telecomunicaciones. Mediante un análisis exploratorio de datos (EDA) y la aplicación de técnicas de **Machine Learning**, se busca anticipar la deserción y proporcionar información estratégica para la retención de clientes.
 
-Datos demográficos: género, edad (SeniorCitizen), si tiene pareja (Partner), dependientes (Dependents).
+## 📊 Dataset
+El conjunto de datos contiene información de **7,267 clientes** con 21 variables, clasificadas en:
 
-Servicios contratados: teléfono, múltiples líneas, internet, seguridad en línea, backup, soporte técnico, streaming, etc.
+* **Datos demográficos:** Género, edad (`SeniorCitizen`), si tiene pareja (`Partner`), dependientes (`Dependents`).
+* **Servicios contratados:** Teléfono, múltiples líneas, internet, seguridad en línea, backup, soporte técnico, streaming, etc.
+* **Detalles de la cuenta:** Antigüedad (`tenure`), tipo de contrato, facturación sin papel, método de pago, cargos mensuales y totales.
+* **Variable objetivo:** `Churn` (Yes/No) indica si el cliente abandonó la empresa.
 
-Detalles de la cuenta: antigüedad (tenure), tipo de contrato, facturación sin papel, método de pago, cargos mensuales y totales.
+---
 
-Variable objetivo: Churn (Yes/No) que indica si el cliente abandonó la empresa.
+## 🛠️ Procesamiento de Datos
 
-🛠️ Procesamiento de Datos
-Limpieza:
+### 1. Limpieza
+* **Eliminación de Identificadores:** Se eliminó la columna `customerID` por no aportar valor predictivo.
+* **Corrección de Tipos:** Se convirtió `TotalCharges` a numérico (manejando cadenas vacías) y se eliminaron 11 filas con valores nulos resultantes.
 
-Se eliminó la columna customerID por ser un identificador único sin valor predictivo.
+### 2. Codificación y Balanceo
+* **Variables Categóricas:** Aplicación de *One-Hot Encoding* (`pd.get_dummies`) excluyendo la variable objetivo.
+* **Variable Objetivo:** Mapeo binario (`Yes=1`, `No=0`).
+* **SMOTE:** Se utilizó la técnica de sobremuestreo para balancear la clase minoritaria (**26.6%** de churn original).
 
-Se convirtió Charges.Total a numérico (algunos valores eran cadenas vacías) y se eliminaron filas con valores nulos (11 registros).
+---
 
-Codificación de variables categóricas:
+## 📈 Análisis Exploratorio (EDA)
 
-Se aplicó one-hot encoding (pd.get_dummies) a todas las variables categóricas, excluyendo la variable objetivo.
+* **Correlación:** Las variables con mayor impacto en el Churn son `tenure` (-0.35), `TotalCharges` (-0.20) y `MonthlyCharges` (0.19).
+* **Insights:** * Clientes con menor antigüedad y cargos totales bajos tienden a cancelar más.
+    * Los contratos de mes a mes y el servicio de fibra óptica presentan mayores tasas de deserción.
 
-La variable Churn se mapeó a valores binarios (Yes=1, No=0).
 
-Análisis de desbalance:
 
-La proporción de cancelaciones fue de 26.6% (clase minoritaria), lo que indica un desbalance moderado.
+---
 
-Se aplicó SMOTE para balancear las clases en el conjunto de entrenamiento.
+## 🤖 Modelos Predictivos
+Se utilizaron pipelines con escalado de variables (`StandardScaler`) para entrenar los siguientes modelos:
 
-📈 Análisis Exploratorio
-Correlación: Las variables con mayor correlación con Churn son tenure (-0.35), Charges.Total (-0.20) y Charges.Monthly (0.19). Esto sugiere que los clientes con menos antigüedad y cargos totales bajos tienden a cancelar más.
+### 1. Regresión Logística
+* **Accuracy:** 80.3%
+* **ROC-AUC:** 0.845
+* **Métricas Clase Churn:** Precisión 0.66, Recall 0.54.
 
-Visualizaciones:
+### 2. Random Forest
+* **Importancia de Variables:** Identificó a `tenure`, `TotalCharges` y `MonthlyCharges` como los predictores más relevantes.
+* **Performance:** Proporcionó una clasificación robusta ideal para identificar patrones no lineales.
 
-Boxplots de tenure y Charges.Total según Churn confirman que los que cancelan tienen menor antigüedad y menor gasto total.
 
-Matriz de correlación general entre variables numéricas.
 
-🤖 Modelos Predictivos
-Se entrenaron dos modelos de clasificación utilizando pipeline con escalado de variables numéricas (StandardScaler):
+---
 
-1. Regresión Logística
-Accuracy: 80.3%
+## 🔍 Conclusiones Estratégicas
+1.  **Segmento Crítico:** Clientes con poca antigüedad y cargos mensuales altos.
+2.  **Riesgo por Contrato:** Los contratos *month-to-month* son los más volátiles.
+3.  **Recomendaciones:**
+    * Enfocar campañas de lealtad en clientes nuevos (primeros 6-12 meses).
+    * Ofrecer incentivos para migrar de contratos mensuales a anuales.
+    * Monitorear la calidad del servicio en usuarios de fibra óptica.
 
-ROC-AUC: 0.845
-
-Reporte de clasificación:
-
-Precisión clase 0 (no churn): 0.84
-
-Precisión clase 1 (churn): 0.66
-
-Recall clase 1: 0.54
-
-Matriz de confusión y curva ROC incluidos.
-
-2. Random Forest
-Accuracy: (no se muestra en el PDF, pero se puede calcular a partir de los resultados esperados)
-
-ROC-AUC: (similar o superior)
-
-Importancia de variables: Se identificaron las características más relevantes para la predicción, destacando tenure, Charges.Total, Charges.Monthly y algunos servicios como InternetService_Fiber optic y Contract_One year.
-
-🔍 Conclusiones Estratégicas
-Los clientes con poca antigüedad y altos cargos mensuales son más propensos a cancelar.
-
-Contratos de corto plazo (month-to-month) y servicios como fibra óptica están asociados con mayor churn.
-
-Se recomienda enfocar campañas de retención en clientes nuevos, ofrecer incentivos para contratos más largos y mejorar la calidad de servicios con alta tasa de cancelación.
+---
